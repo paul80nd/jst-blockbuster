@@ -276,21 +276,27 @@
     svgBoard.appendChild(title);
   }
 
+  /**
+   * Method called when a lettered hexagon is clicked
+   *
+   * @param evt the click event raised
+   */
   function hexClick(evt) {
-    const hex = evt.target;
-    const hexHolder = hex.parentElement;
+    const hex = evt.target;                 // The SVG use element being clicked
+    const hexHolder = hex.parentElement;    // The parent SVG g element
 
     // State A->B (letter chosen)
     if (hexHolder.className.baseVal === 'stateA') {
       hexHolder.setAttribute('class', 'stateB');
     }
-    // State B->C (letter taken)
+
+    // or State B->C (letter taken)
     else if (hexHolder.className.baseVal === 'stateB') {
-      // Blue self
+      // Set self to Blue
       hexHolder.setAttribute('class', 'stateC');
       hex.setAttributeNS(xlinkns, 'href', '#hex_templ_blue')
 
-      // White others
+      // Set others to White
       let la = hex.getAttribute('data-letter');
       let id = hexHolder.getAttribute('id');
       let others = document.querySelectorAll(`[data-letter="${la}"]`);
@@ -303,7 +309,8 @@
         }
       }
     }
-    // State C->A (undo)
+
+    // or State C->A (undo)
     else if (hexHolder.className.baseVal === 'stateC') {
       // Restore self and others
       let la = hex.getAttribute('data-letter');
@@ -314,7 +321,6 @@
         others[i].setAttributeNS(xlinkns, 'href', '#hex_templ_letter')
       }
     }
-
   }
 
   // Main Entry Point
