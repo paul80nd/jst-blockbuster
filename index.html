@@ -76,8 +76,15 @@
       cursor: pointer;
     }
 
+    text {
+      text-anchor: middle;
+      font-size: 70px;
+      dominant-baseline: middle;
+    }
+
     text.answer {
       font-family: 'Helvetica Neue', 'Arial Nova', sans-serif;
+      font-size: 18px;
       fill: white;
       opacity: 0;
     }
@@ -107,6 +114,7 @@
 </head>
 
 <body>
+
 <!-- Main SVG element for displaying the play board -->
 <svg id="svgBoard" version="1.1" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 1270 690">
   <defs>
@@ -141,18 +149,36 @@
     to one of the templates/definitions above
   -->
 </svg>
+
 <script>
+  // Namespaces for creating SVG elements and attributes
   const svgns = "http://www.w3.org/2000/svg";
   const xlinkns = "http://www.w3.org/1999/xlink";
 
-  // Creates new svg element in form of
-  // <g transform="translate(300 50)">
-  //    <use xlink:href="#hex_templ_blue" />
-  //    <text text-anchor="middle" dominant-baseline="middle" x="60" y="45" font-size="70px">G</text>
-  // </g>
+  /**
+   * Creates a new svg element
+   *
+   * @param {number} x position within SVG view box
+   * @param {number} y position within SVG view box
+   * @param {string} templ SVG template/definition to use for shape
+   * @param {string} qnLetter letter to display (where needed)
+   * @param {string} answer text to display when answered (where needed)
+   */
   function createHex(x, y, templ, qnLetter, answer) {
+
+    // creates similar to:
+    // <g transform="translate(300 50)">
+    //    <use xlink:href="#hex_templ_blue" />
+    // </g>
+    // or
+    // <g transform="translate(300 50)" class="stateA">
+    //    <use xlink:href="#hex_templ_letter" onclick="hexClick(evt);" data-letter="G" />
+    //    <text x="60" y="45">G</text>
+    //    <text x="60" y="45" class="answer">Grapes</text>
+    // </g>
+
     const e = document.createElementNS(svgns, 'g');
-    e.setAttribute('transform', `translate(${x},${y})`);
+    e.setAttribute('transform', `translate(${x} ${y})`);
 
     const eu = document.createElementNS(svgns, 'use');
     eu.setAttributeNS(xlinkns, 'href', templ);
@@ -163,18 +189,12 @@
       e.setAttribute('class', 'stateA')
       eu.setAttribute('data-letter', qnLetter);
       const qn = document.createElementNS(svgns, 'text');
-      qn.setAttribute('font-size', '70px');
-      qn.setAttribute('text-anchor', 'middle');
-      qn.setAttribute('dominant-baseline', 'middle');
       qn.setAttribute('x', '60');
       qn.setAttribute('y', '45');
       qn.innerHTML = qnLetter;
       e.appendChild(qn);
       const ans = document.createElementNS(svgns, 'text');
-      ans.setAttribute('font-size', '18px');
       ans.setAttribute('class', 'answer');
-      ans.setAttribute('text-anchor', 'middle');
-      ans.setAttribute('dominant-baseline', 'middle');
       ans.setAttribute('x', '60');
       ans.setAttribute('y', '45');
       ans.innerHTML = answer;
