@@ -204,21 +204,10 @@
     return e;
   }
 
-  function createBlueHex(x, y) {
-    return createHex(x, y, '#hex_templ_blue');
-  }
-
-  function createWhiteHex(x, y) {
-    return createHex(x, y, '#hex_templ_white');
-  }
-
-  function createTextHex(x, y, qn, ans) {
-    return createHex(x, y, '#hex_templ_letter', qn, ans);
-  }
-
-  function createTitle() {
-    return createHex(0, 0, '#title');
-  }
+  const createBlueHex = (x, y) => createHex(x, y, '#hex_templ_blue');
+  const createWhiteHex = (x, y) => createHex(x, y, '#hex_templ_white');
+  const createTextHex = (x, y, qn, ans) => createHex(x, y, '#hex_templ_letter', qn, ans);
+  const createTitle = () => createHex(0, 0, '#title');
 
   window.onload = function () {
 
