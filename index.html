@@ -107,30 +107,39 @@
 </head>
 
 <body>
+<!-- Main SVG element for displaying the play board -->
 <svg id="svgBoard" version="1.1" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 1270 690">
   <defs>
+    <!-- template for blue hexagon -->
     <g id="hex_templ_blue" class="hex blue">
       <polygon points="25 0,95 0,120 45, 95 90,25 90,0 45"/>
     </g>
+    <!-- template for white hexagon -->
     <g id="hex_templ_white" class="hex white">
       <polygon points="25 0,95 0,120 45, 95 90,25 90,0 45"/>
     </g>
+    <!-- template for lettered hexagon -->
     <g id="hex_templ_letter" class="hex letter">
       <polygon points="25 0,95 0,120 45, 95 90,25 90,0 45" class="outline"/>
       <polygon points="30 10,90 10,110 45, 90 80,30 80,10 45"/>
     </g>
+    <!-- template for title/splash screen -->
     <g id="title" class="title">
       <rect x="-100" y="-100" width="1470" height="890" class="cover"/>
       <g transform="translate(35,250)">
         <rect x="0" y="0" width="1200" height="200" class="box"/>
         <text text-anchor="middle" dominant-baseline="middle" x="600" y="80">BLOCKBUSTERS</text>
-        <text text-anchor="middle" dominant-baseline="middle" x="600" y="170" class="sub">Technology and
-          Data Special Edition
+        <text text-anchor="middle" dominant-baseline="middle" x="600" y="170" class="sub">
+          Technology and Data Special Edition
         </text>
       </g>
     </g>
   </defs>
-
+  <!--
+    The visible SVG content will be populated by the JavaScript below by
+    creating new <g> elements containing a <use> element that then refer
+    to one of the templates/definitions above
+  -->
 </svg>
 <script>
   const svgns = "http://www.w3.org/2000/svg";
