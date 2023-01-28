@@ -5,6 +5,9 @@
     <title>Blockbusters - Technology &amp; Data Edition</title>
     <link href="https://fonts.cdnfonts.com/css/seven-segment" rel="stylesheet">
     <style>
+        
+        /* Main Styles */
+
         body {
             background-color: #1e1e1e;
             font-family: 'Seven Segment', sans-serif;
@@ -16,7 +19,20 @@
         #svgBoard {
             width: 100vw;
             height: 100vh;
+            position: absolute;
+            left: 0;
+            top: 0;
         }
+
+        #svgBoard text {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        /* Title / Splash Screen */
 
         .title rect.cover {
             fill: black;
@@ -41,6 +57,8 @@
             font-family: 'Helvetica Neue', 'Arial Nova', sans-serif;
         }
 
+        /* Hexagons */
+
         .hex.blue polygon {
             fill: #2bafcd;
         }
@@ -58,13 +76,13 @@
             cursor: pointer;
         }
 
-        #svgBoard text {
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            pointer-events: none;
+        text.answer {
+            font-family: 'Helvetica Neue', 'Arial Nova', sans-serif;
+            fill: white;
+            opacity: 0;
         }
+
+        /* Hexagon States */
 
         .stateB {
             animation: 2s opacity ease-in-out infinite;
@@ -81,12 +99,6 @@
             opacity: 0;
         }
 
-        text.answer {
-            font-family: 'Helvetica Neue', 'Arial Nova', sans-serif;
-            fill: white;
-            opacity: 0;
-        }
-
         .stateC text.answer {
             opacity: 1;
         }
@@ -95,8 +107,7 @@
 </head>
 
 <body>
-<svg id="svgBoard" version="1.1" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 1270 690"
-     style="position: absolute; left:0px; top:0px;">
+<svg id="svgBoard" version="1.1" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 1270 690">
     <defs>
         <g id="hex_templ_blue" class="hex blue">
             <polygon points="25 0,95 0,120 45, 95 90,25 90,0 45"/>
@@ -290,11 +301,9 @@
         else if (hexHolder.className.baseVal === 'stateC') {
             // Restore self and others
             let la = hex.getAttribute('data-letter');
-            let id = hexHolder.getAttribute('id');
             let others = document.querySelectorAll(`[data-letter="${la}"]`);
-            for (i = 0; i < others.length; ++i) {
+            for (let i = 0; i < others.length; ++i) {
                 let otherHolder = others[i].parentElement;
-                let otherId = otherHolder.getAttribute('id');
                 otherHolder.setAttribute('class', 'stateA');
                 others[i].setAttributeNS(xlinkns, 'href', '#hex_templ_letter')
             }
