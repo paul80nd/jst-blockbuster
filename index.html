@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Blockbusters - Technology &amp; Data Edition</title>
+    <link href="https://fonts.cdnfonts.com/css/seven-segment" rel="stylesheet">
+    <style>
+        body {
+            background-color: #1e1e1e;
+            font-family: 'Seven Segment', sans-serif;
+            margin: 0;
+            height: 100%;
+            overflow: hidden
+        }
+
+        #svgBoard {
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .title rect.cover {
+            fill: black;
+            opacity: .5;
+        }
+
+        .title rect.box {
+            fill: #2bafcd;
+            stroke: white;
+            stroke-width: 5px;
+            box-shadow: 12px 12px 2px 1px rgba(0, 0, 255, .2);
+        }
+
+        .title text {
+            fill: white;
+            font-size: 150px;
+            text-shadow: 4px 4px #000000;
+        }
+
+        .title text.sub {
+            font-size: 38px;
+            font-family: 'Helvetica Neue',
+                'Arial Nova',
+                sans-serif;
+        }
+
+        .hex.blue polygon {
+            fill: #2bafcd;
+        }
+
+        .hex.white polygon {
+            fill: #ccccc9;
+        }
+
+        .hex.letter polygon.outline {
+            fill: #ac6f28;
+        }
+
+        .hex.letter polygon {
+            fill: #cdcb21;
+            cursor: pointer;
+        }
+
+        #svgBoard text {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        .stateB {
+            animation: 2s opacity ease-in-out infinite;
+        }
+
+        @keyframes opacity {
+            50% {
+                opacity: 0.4
+            }
+        }
+
+        .stateC text,
+        .stateD text {
+            opacity: 0;
+        }
+
+        text.answer {
+            font-family: 'Helvetica Neue', 'Arial Nova', sans-serif;
+            fill: white;
+            opacity: 0;
+        }
+
+        .stateC text.answer {
+            opacity: 1;
+        }
+
+    </style>
+</head>
+
+<body>
+    <svg id="svgBoard" version="1.1" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 1270 690"
+        style="position: absolute; left:0px; top:0px;">
+        <defs>
+            <g id="hex_templ_blue" class="hex blue">
+                <polygon points="25 0,95 0,120 45, 95 90,25 90,0 45" />
+            </g>
+            <g id="hex_templ_white" class="hex white">
+                <polygon points="25 0,95 0,120 45, 95 90,25 90,0 45" />
+            </g>
+            <g id="hex_templ_letter" class="hex letter">
+                <polygon points="25 0,95 0,120 45, 95 90,25 90,0 45" class="outline" />
+                <polygon points="30 10,90 10,110 45, 90 80,30 80,10 45" />
+            </g>
+            <g id="title" class="title">
+                <rect x="-100" y="-100" width="1470" height="890" class="cover" />
+                <g transform="translate(35,250)">
+                    <rect x="0" y="0" width="1200" height="200" class="box" />
+                    <text text-anchor="middle" dominant-baseline="middle" x="600" y="80">BLOCKBUSTERS</text>
+                    <text text-anchor="middle" dominant-baseline="middle" x="600" y="170" class="sub">Technology and
+                        Data Special Edition</text>
+                </g>
+            </g>
+        </defs>
+
+    </svg>
+    <script>
+        var svgns = "http://www.w3.org/2000/svg";
+        var xlinkns = "http://www.w3.org/1999/xlink";
+
+        // Creates new svg element in form of
+        // <g transform="translate(300 50)">
+        //    <use xlink:href="#hex_templ_blue" />
+        //    <text text-anchor="middle" dominant-baseline="middle" x="60" y="45" font-size="70px">G</text>
+        // </g>
+        function createHex(x, y, templ, qnLetter, answer) {
+            var e = document.createElementNS(svgns, 'g');
+            e.setAttribute('transform', `translate(${x},${y})`);
+
+            var eu = document.createElementNS(svgns, 'use');
+            eu.setAttributeNS(xlinkns, 'href', templ);
+            e.appendChild(eu);
+
+            if (qnLetter) {
+                eu.setAttribute('onclick', 'hexClick(evt);');
+                e.setAttribute('class', 'stateA')
+                eu.setAttribute('data-letter', qnLetter);
+                var qn = document.createElementNS(svgns, 'text');
+                qn.setAttribute('font-size', '70px');
+                qn.setAttribute('text-anchor', 'middle');
+                qn.setAttribute('dominant-baseline', 'middle');
+                qn.setAttribute('x', '60');
+                qn.setAttribute('y', '45');
+                qn.innerHTML = qnLetter;
+                e.appendChild(qn);
+                var ans = document.createElementNS(svgns, 'text');
+                ans.setAttribute('font-size', '18px');
+                ans.setAttribute('class', 'answer');
+                ans.setAttribute('text-anchor', 'middle');
+                ans.setAttribute('dominant-baseline', 'middle');
+                ans.setAttribute('x', '60');
+                ans.setAttribute('y', '45');
+                ans.innerHTML = answer;
+                e.appendChild(ans);
+            }
+
+            return e;
+        }
+
+        function createBlueHex(x, y) { return createHex(x, y, '#hex_templ_blue'); }
+        function createWhiteHex(x, y) { return createHex(x, y, '#hex_templ_white'); }
+        function createTextHex(x, y, qn, ans) { return createHex(x, y, '#hex_templ_letter', qn, ans); }
+        function createTitle() { return createHex(0, 0, '#title'); }
+
+        window.onload = function () {
+
+            var svgBoard = document.getElementById('svgBoard');
+            var hw = 12;    // board width (hex blocks)
+            var hh = 6;     // board height (hex blocks)
+            var gw = 99;   // grid width (hex-to-hex)
+            var gh = 48;   // grid height (hex-to-hex)
+            var ox = -70;   // offset x
+            var oy = -60;     // offset y
+
+            var places = [
+                ['A', 'G', 'F', 'L', 'C', 'I', 'A', 'G', 'E', 'K', 'C', 'I'],
+                ['B', 'H', 'E', 'K', 'B', 'H', 'B', 'H', 'F', 'L', 'D', 'J'],
+                ['C', 'I', 'D', 'J', 'A', 'G', 'C', 'I', 'A', 'G', 'E', 'K'],
+                ['D', 'J', 'C', 'I', 'F', 'L', 'D', 'J', 'B', 'H', 'F', 'L'],
+                ['E', 'K', 'B', 'H', 'E', 'K', 'E', 'K', 'C', 'I', 'A', 'G'],
+                ['F', 'L', 'A', 'G', 'D', 'J', 'F', 'L', 'D', 'J', 'B', 'H']
+            ]
+
+            var qnMap = {
+                A: "P",
+                B: "O",
+                C: "C",
+                D: "R",
+                E: "A",
+                F: "B",
+                G: "G",
+                H: "L",
+                I: "M",
+                J: "S",
+                K: "D",
+                L: "W",
+            }
+
+            var ansMap = {
+                A: "Platforms",
+                B: "Operations",
+                C: "CMDB",
+                D: "Roadmaps",
+                E: "Apples",
+                F: "Bananas",
+                G: "Grapes",
+                H: "Lemon",
+                I: "Mango",
+                J: "Satsumas",
+                K: "Dragonfruit",
+                L: "Watermelon",
+            }
+
+            // left/right border
+            for (i = 0; i <= hh; i++) {
+                svgBoard.appendChild(createBlueHex(ox, oy + gh + (i * gh * 2)));
+                svgBoard.appendChild(createBlueHex(ox + gw + (hw * gw), oy + (gh * 2) + (i * gh * 2)));
+            }
+
+            // top/bottom border
+            for (i = 0; i < hw; i++) {
+                svgBoard.appendChild(createWhiteHex(ox + gw + (i * gw), oy + (i % 2 === 0 ? 0 : gh)));
+                svgBoard.appendChild(createWhiteHex(ox + gw + (i * gw), oy + ((hh + 1) * gh * 2) + (i % 2 === 0 ? 0 : gh)));
+            }
+
+            // letters
+            for (y = 0; y < hh; y++) {
+                for (x = 0; x < hw; x++) {
+                    var place = places[y][x];
+                    var qnLetter = qnMap[place];
+                    var answer = ansMap[place];
+                    var hex = createTextHex(ox + gw + (x * gw), oy + ((y + 1) * gh * 2) + (x % 2 === 0 ? 0 : gh), qnLetter, answer);
+                    hex.setAttribute('id', `hex_${x}_${y}`);
+                    svgBoard.appendChild(hex);
+                }
+            }
+
+            // title screen
+            var title = createTitle();
+            title.setAttribute('onclick', 'hideTitle(evt);');
+            svgBoard.appendChild(title);
+        }
+
+        function hexClick(evt) {
+            var hex = evt.target;
+            var hexHolder = hex.parentElement;
+
+            // State A->B (letter chosen)
+            if (hexHolder.className.baseVal === 'stateA') {
+                hexHolder.setAttribute('class', 'stateB');
+            }
+            // State B->C (letter taken)
+            else if (hexHolder.className.baseVal === 'stateB') {
+                // Blue self
+                hexHolder.setAttribute('class', 'stateC');
+                hex.setAttributeNS(xlinkns, 'href', '#hex_templ_blue')
+
+                // White others
+                var la = hex.getAttribute('data-letter');
+                var id = hexHolder.getAttribute('id');
+                var others = document.querySelectorAll(`[data-letter="${la}"]`);
+                for (i = 0; i < others.length; ++i) {
+                    var otherHolder = others[i].parentElement;
+                    var otherId = otherHolder.getAttribute('id');
+                    if (id !== otherId) {
+                        otherHolder.setAttribute('class', 'stateD');
+                        others[i].setAttributeNS(xlinkns, 'href', '#hex_templ_white');
+                    }
+                }
+            }
+            // State C->A (undo)
+            else if (hexHolder.className.baseVal === 'stateC') {
+                // Restore self and others
+                var la = hex.getAttribute('data-letter');
+                var id = hexHolder.getAttribute('id');
+                var others = document.querySelectorAll(`[data-letter="${la}"]`);
+                for (i = 0; i < others.length; ++i) {
+                    var otherHolder = others[i].parentElement;
+                    var otherId = otherHolder.getAttribute('id');
+                    otherHolder.setAttribute('class', 'stateA');
+                    others[i].setAttributeNS(xlinkns, 'href', '#hex_templ_letter')
+                }
+            }
+
+        }
+
+        function hideTitle(evt) {
+            var title = evt.target;
+            var titleHolder = title.parentElement;
+            titleHolder.remove();
+        }
+    </script>
+</body>
+
+</html>
