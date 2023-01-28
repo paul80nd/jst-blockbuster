@@ -1,6 +1,7 @@
 # BlockBuster
 
-Extemely basic emulation of the game board used in the Blockbuster TV show as a means to share deparmental strategy at a company offsite. Probably meaningless outside the company I work for but shared here publically in case of interest.
+Extremely basic emulation of the game board used in the Blockbuster TV show as a means to share departmental strategy at a
+company offsite. Probably meaningless outside the company I work for but shared here publicly in case of interest.
 
 Made up of a single html file incorporating css styles, an SVG image and basic javascript to add interactivity.
 
