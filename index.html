@@ -209,7 +209,10 @@
   const createTextHex = (x, y, qn, ans) => createHex(x, y, '#hex_templ_letter', qn, ans);
   const createTitle = () => createHex(0, 0, '#title');
 
-  window.onload = function () {
+  /**
+   * Initialises the game board by constructing the various hexagon tiles
+   */
+  function initialise() {
 
     const svgBoard = document.getElementById('svgBoard');
     const hw = 12;   // board width (hex blocks)
@@ -219,6 +222,8 @@
     const ox = -70;  // offset x
     const oy = -60;  // offset y
 
+    // Where question letters should be placed on the game board
+    // (sized accordingly to hw and hh above)
     const places = [
       ['A', 'G', 'F', 'L', 'C', 'I', 'A', 'G', 'E', 'K', 'C', 'I'],
       ['B', 'H', 'E', 'K', 'B', 'H', 'B', 'H', 'F', 'L', 'D', 'J'],
@@ -228,63 +233,46 @@
       ['F', 'L', 'A', 'G', 'D', 'J', 'F', 'L', 'D', 'J', 'B', 'H']
     ];
 
+    // Map from placeholder letters above to question letters to display
     const qnMap = {
-      A: "P",
-      B: "O",
-      C: "C",
-      D: "R",
-      E: "A",
-      F: "B",
-      G: "G",
-      H: "L",
-      I: "M",
-      J: "S",
-      K: "D",
-      L: "W",
+      A: "P", B: "O", C: "C", D: "R", E: "A", F: "B",
+      G: "G", H: "L", I: "M", J: "S", K: "D", L: "W"
     };
 
+    // Map from placeholder letters above to answers for questions to display
     const ansMap = {
-      A: "Platforms",
-      B: "Operations",
-      C: "CMDB",
-      D: "Roadmaps",
-      E: "Apples",
-      F: "Bananas",
-      G: "Grapes",
-      H: "Lemon",
-      I: "Mango",
-      J: "Satsumas",
-      K: "Dragonfruit",
-      L: "Watermelon",
+      A: "Platforms", B: "Operations", C: "CMDB", D: "Roadmaps", E: "Apples", F: "Bananas",
+      G: "Grapes", H: "Lemon", I: "Mango", J: "Satsumas", K: "Dragonfruit", L: "Watermelon",
     };
 
-    // left/right border
+    // add left/right borders
     for (let i = 0; i <= hh; i++) {
       svgBoard.appendChild(createBlueHex(ox, oy + gh + (i * gh * 2)));
       svgBoard.appendChild(createBlueHex(ox + gw + (hw * gw), oy + (gh * 2) + (i * gh * 2)));
     }
 
-    // top/bottom border
+    // add top/bottom border
     for (let i = 0; i < hw; i++) {
       svgBoard.appendChild(createWhiteHex(ox + gw + (i * gw), oy + (i % 2 === 0 ? 0 : gh)));
       svgBoard.appendChild(createWhiteHex(ox + gw + (i * gw), oy + ((hh + 1) * gh * 2) + (i % 2 === 0 ? 0 : gh)));
     }
 
-    // letters
+    // add letters
     for (let y = 0; y < hh; y++) {
       for (let x = 0; x < hw; x++) {
         let place = places[y][x];
-        let qnLetter = qnMap[place];
-        let answer = ansMap[place];
-        let hex = createTextHex(ox + gw + (x * gw), oy + ((y + 1) * gh * 2) + (x % 2 === 0 ? 0 : gh), qnLetter, answer);
-        hex.setAttribute('id', `hex_${x}_${y}`);
+        let hex = createTextHex(
+          ox + gw + (x * gw),
+          oy + ((y + 1) * gh * 2) + (x % 2 === 0 ? 0 : gh),
+          qnMap[place], ansMap[place]);
+        hex.setAttribute('id', `hex_${x}_${y}`); // used when finding other hexagons with same letter
         svgBoard.appendChild(hex);
       }
     }
 
-    // title screen
+    // overlay title screen
     const title = createTitle();
-    title.setAttribute('onclick', 'hideTitle(evt);');
+    title.setAttribute('onclick', 'evt.target.parentElement.remove();');  // remove container
     svgBoard.appendChild(title);
   }
 
@@ -329,11 +317,9 @@
 
   }
 
-  function hideTitle(evt) {
-    const title = evt.target;
-    const titleHolder = title.parentElement;
-    titleHolder.remove();
-  }
+  // Main Entry Point
+  window.onload = () => initialise();
+
 </script>
 </body>
 
