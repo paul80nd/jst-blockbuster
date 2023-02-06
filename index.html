@@ -141,6 +141,22 @@
         </text>
       </g>
     </g>
+    <!-- template for end/splash screen -->
+    <g id="end" class="title">
+      <rect x="-100" y="-100" width="1470" height="890" class="cover"/>
+      <g transform="translate(35,250)">
+        <rect x="0" y="0" width="1200" height="200" class="box"/>
+        <text text-anchor="middle" dy=".25em" x="600" y="50" class="sub">
+          - One Technology Team -
+        </text>
+        <text text-anchor="middle" dy=".25em" x="600" y="105" class="sub">
+          - Cloud: Enabled, Ready, Native -
+        </text>
+        <text text-anchor="middle" dy=".25em" x="600" y="160" class="sub">
+          - Services/Consumerisation Mindset -
+        </text>
+      </g>
+    </g>
   </defs>
   <!--
     The visible SVG content will be populated by the JavaScript below by
@@ -209,6 +225,7 @@
   const createWhiteHex = (x, y) => createHex(x, y, '#hex_templ_white');
   const createTextHex = (x, y, qn, ans) => createHex(x, y, '#hex_templ_letter', qn, ans);
   const createTitle = () => createHex(0, 0, '#title');
+  const createEnd = () => createHex(0, 0, '#end');
 
   /**
    * Initialises the game board by constructing the various hexagon tiles
@@ -308,6 +325,14 @@
           otherHolder.setAttribute('class', 'stateD');
           others[i].setAttributeNS(xlinkns, 'href', '#hex_templ_white');
         }
+      }
+
+      // Game over (all letters stateC)
+      if(document.querySelectorAll('g.stateC').length === 12) {
+        // Show end splash
+        const end = createEnd();
+        end.setAttribute('onclick', 'evt.target.parentElement.remove();');  // remove container
+        svgBoard.appendChild(end);
       }
     }
 
